@@ -49,7 +49,7 @@ public class ListGraph extends Graph{
         MyList<Edge> inEdgeList = new MyList<>();
         // Loops through each adjacency list.
         for (int i = 0; i < n; i++) {
-            MyList<Edge> iOutEdges = backingArray[vertex];
+            MyList<Edge> iOutEdges = backingArray[i];
             // In each adjacency list, add any edges that point to vertex vertex.
             for (int j = 0; j < iOutEdges.size(); j++) {
                 if (iOutEdges.get(j).getTo() == vertex) {
@@ -64,4 +64,7 @@ public class ListGraph extends Graph{
     public MyList<Edge> outEdges(int vertex) {
         return backingArray[vertex];
     }
+
+    // Returns the size of the graph.
+    public int getSize() {return n;}
 }

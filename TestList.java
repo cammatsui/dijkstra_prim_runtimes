@@ -40,6 +40,7 @@ public class TestList {
                 case "pop":
                     i = getIndex();
                     System.out.println("Got " + testList.pop(i) + " from popping index "+ i);
+                    break;
             }
             System.out.println(testList);
         }

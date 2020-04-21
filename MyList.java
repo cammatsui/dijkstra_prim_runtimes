@@ -1,4 +1,4 @@
-public class MyList<E> implements List<E> {
+public class MyList<E extends Comparable<E>> implements List<E> {
 
     private int size;
     private ListNode<E> first;
@@ -87,6 +87,11 @@ public class MyList<E> implements List<E> {
     public E pop(int i) {
         if (i >= this.size || i < 0) {throwIndexException(i);}
         ListNode<E> toPop = getNode(i);
+        return pop(toPop);
+    }
+
+    // Remove the given node and return its contents.
+    public E pop(ListNode<E> toPop) {
         if (toPop == this.first) {
             ListNode<E> newFirst = toPop.getNext();
             if (newFirst != null) newFirst.setPrev(null);
@@ -134,6 +139,7 @@ public class MyList<E> implements List<E> {
 
     // Returns a string representing the list, e.g. "[1,2,3]"
     public String toString() {
+        if (this.size == 0) return "[]";
         String str = "[";
         ListNode<E> temp = this.first;
         for(int c = 0; c < this.size-1; c++) {
@@ -142,5 +148,27 @@ public class MyList<E> implements List<E> {
         }
         str += get(this.size-1) + "]";
         return str;
+    }
+
+    // Returns the ListNode that contains the minimum value.
+    private ListNode<E> minNode() {
+        if (this.size == 0) {return null;}
+        ListNode<E> currentNode = this.first;
+        E minValue = currentNode.getContents();
+        ListNode<E> minNode = currentNode;
+        for (int i = 1; i < size; i++) {
+            currentNode = currentNode.getNext();
+            if (currentNode.getContents().compareTo(minValue) < 0) {
+                minValue = currentNode.getContents();
+                minNode = currentNode;
+            }
+        }
+        return minNode;
+    }
+
+    // Removes the node with the minimum value from the list and returns its contents.
+    public E popMin() {
+        ListNode<E> min = minNode();
+        return pop(min);
     }
 }

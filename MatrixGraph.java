@@ -52,4 +52,7 @@ public class MatrixGraph extends Graph {
         }
         return outEdgeList;
     }
+
+    // Returns the size of the graph.
+    public int getSize() {return n;}
 }
