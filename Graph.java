@@ -120,12 +120,10 @@ public abstract class Graph {
         for (int i = 0; i < 3*n; i++) {
             int randomTo = r.nextInt(n);
             int randomFrom = r.nextInt(n);
-            while (randomFrom == randomTo) randomFrom = r.nextInt(n);
-            
 
+            while (randomFrom == randomTo) randomFrom = r.nextInt(n);
             g.addEdge(randomFrom, randomTo, randomWeight());
         }
-
         return g;
     }
 
