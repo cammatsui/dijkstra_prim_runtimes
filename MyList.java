@@ -10,22 +10,22 @@ public class MyList<E extends Comparable<E>> implements List<E> {
         this.last = null;
     }
 
-    // Return the number of elements in the list
+    // Return the number of elements in the list O(1).
     public int size() {return this.size;}
 
-    // Return the element at index i in the list
+    // Return the element at index i in the list. O(n).
     public E get(int i) {
         if (i >= this.size || i < 0) {throwIndexException(i);}
         return getNode(i).getContents();
     }
     
-    // Set the element at index i to x
+    // Set the element at index i to x O(n).
     public void set(int i, E x) {
         if (i >= this.size || i < 0) {throwIndexException(i);}
         getNode(i).setContents(x);
     }
 
-    // Add a new element at index i; push the previous element at index i back.
+    // Add a new element at index i; push the previous element at index i back. O(n).
     public void add(int i, E x) {
         if (i >= this.size || i < 0) {throwIndexException(i);}
         ListNode<E> toDisplace = getNode(i);
@@ -44,13 +44,13 @@ public class MyList<E extends Comparable<E>> implements List<E> {
         this.size += 1;
     }
 
-    // Remove (and do not return) the element at index i.
+    // Remove (and do not return) the element at index i. O(n).
     public void remove(int i) {
         if (i >= this.size || i < 0) {throwIndexException(i);}
         pop(i);
     }
 
-    // Remove the node with value x if it is in the list. Otherwise, do nothing.
+    // Remove the node with value x if it is in the list. Otherwise, do nothing. O(n).
     public void removeValue(E x) {
         int i = index(x);
         if (i != -1) {
@@ -58,7 +58,7 @@ public class MyList<E extends Comparable<E>> implements List<E> {
         }
     }
 
-    // Returns the index of the first element equal to x. If x is not in the list, returns -1.
+    // Returns the index of the first element equal to x. If x is not in the list, returns -1. O(n).
     public int index(E x) {
         ListNode<E> temp = this.first;
         for (int i = 0; i < this.size; i++) {
@@ -70,7 +70,7 @@ public class MyList<E extends Comparable<E>> implements List<E> {
         return -1;
     }
 
-    // Add an element x to the end of the list.
+    // Add an element x to the end of the list. O(1).
     public void append(E x) {
         ListNode<E> toAppend = new ListNode<E>(x);
         if(this.size == 0) {
@@ -83,14 +83,14 @@ public class MyList<E extends Comparable<E>> implements List<E> {
         this.size += 1;
     }
 
-    // Remove and return the element at index i.
+    // Remove and return the element at index i. O(n).
     public E pop(int i) {
         if (i >= this.size || i < 0) {throwIndexException(i);}
         ListNode<E> toPop = getNode(i);
         return pop(toPop);
     }
 
-    // Remove the given node and return its contents.
+    // Remove the given node and return its contents. O(n).
     public E pop(ListNode<E> toPop) {
         if (toPop == this.first) {
             ListNode<E> newFirst = toPop.getNext();
@@ -112,7 +112,7 @@ public class MyList<E extends Comparable<E>> implements List<E> {
         return toPop.getContents();
     }
 
-    // Remove and return the last element in the list.
+    // Remove and return the last element in the list. O(n).
     public E pop() {
         return this.pop(this.size-1);
     }
@@ -122,7 +122,7 @@ public class MyList<E extends Comparable<E>> implements List<E> {
         throw new IndexOutOfBoundsException("Index " + i + " is out of bounds in list of size " + size + ".");
     }
 
-    // return the ListNode<E> at a given index i.
+    // return the ListNode<E> at a given index i. O(n).
     private ListNode<E> getNode(int i) {
         if (i == 0) return this.first;
         if (i == this.size-1) return this.last;
@@ -137,7 +137,7 @@ public class MyList<E extends Comparable<E>> implements List<E> {
         }
     }
 
-    // Returns a string representing the list, e.g. "[1,2,3]"
+    // Returns a string representing the list, e.g. "[1,2,3]".
     public String toString() {
         if (this.size == 0) return "[]";
         String str = "[";
@@ -150,7 +150,7 @@ public class MyList<E extends Comparable<E>> implements List<E> {
         return str;
     }
 
-    // Returns the ListNode that contains the minimum value.
+    // Returns the ListNode that contains the minimum value. O(n).
     private ListNode<E> minNode() {
         if (this.size == 0) {return null;}
         ListNode<E> currentNode = this.first;
@@ -166,9 +166,15 @@ public class MyList<E extends Comparable<E>> implements List<E> {
         return minNode;
     }
 
-    // Removes the node with the minimum value from the list and returns its contents.
+    // Removes the node with the minimum value from the list and returns its contents. O(n).
     public E popMin() {
         ListNode<E> min = minNode();
         return pop(min);
+    }
+
+    // Returns true if the given element is in the list; false otherwise. O(n).
+    public boolean in(E x) {
+        if (index(x) == -1) return false;
+        return true;
     }
 }

@@ -1,6 +1,7 @@
 public class MatrixGraph extends Graph {
     private int n;
     private double[][] backingMatrix;
+    private boolean undirected;
     // private Dictionary ... (implement later so that each node is a key)
 
     public MatrixGraph(int n) {
@@ -8,28 +9,39 @@ public class MatrixGraph extends Graph {
         this.backingMatrix = new double[n][n];
     }
 
-    // Add an edge from vertex from to vertex to with weight weight.
-    public void addEdge(int from, int to, double weight) {
-        backingMatrix[from][to] = weight;
-    }
-    
-    // Remove the edge from vertex from to vertex to.
-    public void removeEdge(int from, int to) {
-        backingMatrix[from][to] = 0;
+    public MatrixGraph(int n, boolean undirected) {
+        this.n = n;
+        this.backingMatrix = new double[n][n];
+        this.undirected = undirected;
     }
 
-    // Return true if there is an edge from vertex from to vertex to, false otherwise.
+    // Returns whether or not this graph is directed. O(1).
+    public boolean isDirected() {return !undirected;}
+
+    // Add an edge from vertex from to vertex to with weight weight. O(1).
+    public void addEdge(int from, int to, double weight) {
+        backingMatrix[from][to] = weight;
+        if (undirected) backingMatrix[to][from] = weight;
+    }
+    
+    // Remove the edge from vertex from to vertex to. O(1).
+    public void removeEdge(int from, int to) {
+        backingMatrix[from][to] = 0;
+        if (undirected) backingMatrix[to][from] = 0;
+    }
+
+    // Return true if there is an edge from vertex from to vertex to, false otherwise. O(1).
     public boolean hasEdge(int from, int to) {
         if (backingMatrix[from][to] != 0) return true;
         return false;
     }
 
-    // Get the weight of the edge from vertex from to vertex to. Returns 0 if there is no edge.
+    // Get the weight of the edge from vertex from to vertex to. Returns 0 if there is no edge. O(1).
     public double getWeight(int from, int to) {
         return backingMatrix[from][to];
     }
 
-    // Return a list of Edges who point to the vertex vertex.
+    // Return a list of Edges who point to the vertex vertex. O(V).
     public MyList<Edge> inEdges(int vertex) {
         MyList<Edge> inEdgeList = new MyList<>();
         for (int i = 0; i < this.n; i++) {
@@ -41,7 +53,7 @@ public class MatrixGraph extends Graph {
         return inEdgeList;
     }
 
-    // Return a list of Edges who point out of the vertex vertex.
+    // Return a list of Edges who point out of the vertex vertex. O(V).
     public MyList<Edge> outEdges(int vertex) {
         MyList<Edge> outEdgeList = new MyList<>();
         for (int i = 0; i < this.n; i++) {
@@ -53,6 +65,6 @@ public class MatrixGraph extends Graph {
         return outEdgeList;
     }
 
-    // Returns the size of the graph.
+    // Returns the size of the graph. O(1).
     public int getSize() {return n;}
 }

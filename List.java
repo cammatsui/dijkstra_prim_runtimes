@@ -1,3 +1,4 @@
+// The list interface.
 public interface List<E> {
     public int size();
     public E get(int i);
