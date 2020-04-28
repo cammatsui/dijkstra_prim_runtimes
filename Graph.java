@@ -7,6 +7,7 @@ public abstract class Graph {
     // ===========================================================
     // GRAPH INTERFACE
     public abstract void addEdge(int i, int j, double w);
+    public abstract void addEdge(Edge toAdd);
     public abstract void removeEdge(int i, int j);
     public abstract boolean hasEdge(int i, int j);
     public abstract double getWeight(int i, int j);
@@ -20,14 +21,14 @@ public abstract class Graph {
         // "Routing" table.
         VertexPath[] dijkstraTable = new VertexPath[this.getSize()];
         // List of unvisited vertices. A vertex is visited once all of its neighbors have been examined.
-        MyList<VertexPath> unvisited = new MyList<>();
+        MinVertexPathHeap unvisited = new MinVertexPathHeap();
         // Initialize our table and unvisited list.
         for (int i = 0; i < this.getSize(); i++) {
             VertexPath thisVertex = new VertexPath(i);
             // Set initial node's path length to 0.
             if (i == startVertex) thisVertex.setPath(0);
             dijkstraTable[i] = thisVertex;
-            unvisited.append(thisVertex);
+            unvisited.add(thisVertex);
         }
         // Core of algorithm:
         // 1. Visit the unvisited vertex with the shortest current distance.
@@ -38,16 +39,15 @@ public abstract class Graph {
         //      and previous node.
         // 5. Continue steps 1-4 until every node has been visited.
         while (unvisited.size() > 0) {
-            VertexPath visiting = unvisited.popMin();
+            VertexPath visiting = unvisited.remove();
             double currentDistance = visiting.getPath();
             MyList<Edge> neighbors = outEdges(visiting.getVertex());
             for(int i = 0; i < neighbors.size(); i++) {
                 Edge currentEdge = neighbors.get(i);
                 double edgeWeight = currentEdge.getWeight();
-                if (currentDistance + edgeWeight < dijkstraTable[currentEdge.getTo()].getPath()) {
-                    dijkstraTable[currentEdge.getTo()].setPath(currentDistance + edgeWeight);
-                    dijkstraTable[currentEdge.getTo()].setPrev(visiting.getVertex());
-                }
+                VertexPath to = dijkstraTable[(currentEdge.getTo())];
+                if (currentDistance + edgeWeight < to.getPath())
+                    unvisited.update(to, currentDistance+edgeWeight, visiting.getVertex());
             }
         }
         // The method returns a table that has an entry for each vertex
@@ -56,52 +56,77 @@ public abstract class Graph {
     }
 
     public Graph prim(int startVertex) {
-        if (this.isDirected()) {
-            // Prim's algorithm assumes an undirected, connected graph.
-            throw new RuntimeException("Prim's Algorithm must be run on an undirected graph.");
+        // Create prim table, list of unvisited vertices and flags
+        VertexPath[] primTable = new VertexPath[this.getSize()];
+        MinVertexPathHeap unvisited = new MinVertexPathHeap();
+        boolean[] unvisitedFlag = new boolean[this.getSize()];
+
+        // Initialize everything
+        for (int i = 0; i < this.getSize(); i++) {
+            VertexPath thisVertex = new VertexPath(i);
+            unvisitedFlag[i] = true;
+            if (i == startVertex) thisVertex.setPath(0);
+            primTable[i] = thisVertex;
+            unvisited.add(thisVertex);
         }
-        // Create an empty graph of the same size. This is what will be returned as the minimum spanning tree.
-        Graph g = new MatrixGraph(getSize(), true);
-        // Create a list of visisted nodes.
-        MyList<Integer> visited = new MyList<>();
-        // Create a min heap (min priority queue) to add all of the possible edges to.
-        MinEdgeHeap edgeHeap = new MinEdgeHeap();
-        // The first vertex we're visiting.
-        int currentVertex = startVertex;
-        // Core of the algorithm:
-        // 1. Mark the current vertex as visited.
-        // 2. Add all of that vertex's outedges to the min heap. Pop until you find the minimum
-        //      edge that points to an unvisited vertex.
-        // 3. Add that minimum edge to our minimum spanning tree.
-        // 4. Move the current vertex to the vertex that this minimum edge points to.
-        // 5. Repeat until every visitable node has been visited.
-        while (visited.size() < getSize()) {
-            visited.append(currentVertex);
-            // We're done if we've visited all the vertices.
-            if (visited.size() == getSize()) break;
-            MyList<Edge> out = outEdges(currentVertex);
-            while (out.size() > 0)
-                edgeHeap.add(out.pop());
 
-            // We're done if there are no more visitable vertices.
-            if (edgeHeap.size() == 0) break;
-
-            Edge next = edgeHeap.remove();            
-            
-            while (visited.in(next.getTo())) {
-                next = edgeHeap.remove();
+        while (unvisited.size() > 0) {
+            // Visit the unvisited node with the smallest known edge.
+            VertexPath visiting = unvisited.remove();
+            int vert = visiting.getVertex();
+            // Mark that we've visited it.
+            unvisitedFlag[vert] = false;
+            // For each vertex pointed to by an outedge, if the vertex is unvisited and this outedge is smaller,
+            //      update the corresponding VertexPath's value and previous vertex.
+            MyList<Edge> out = outEdges(vert);
+            for (int i = 0; i < out.size(); i++) {
+                Edge temp = out.get(i);
+                if (unvisitedFlag[temp.getTo()] == true && temp.getWeight() < primTable[temp.getTo()].getPath()) {
+                    VertexPath to = primTable[temp.getTo()];
+                    unvisited.update(to, temp.getWeight(), temp.getFrom());
+                }
             }
-            g.addEdge(next.getFrom(), next.getTo(), next.getWeight());
-            currentVertex = next.getTo();
+
+        }
+    
+        Graph mst = new MatrixGraph(getSize(), true);
+
+        // Add the shortest edges from the table to the MST
+        for (int i = 0; i < this.getSize(); i++) {
+            if (i == startVertex) continue;
+            int from = primTable[i].getPrev();
+            int to = primTable[i].getVertex();
+            double weight = primTable[i].getPath();
+            mst.addEdge(from, to, weight);
+        }
+
+        return mst;
+    }
+
+    // Returns a random directed, not necessarily connected, graph to test Dijkstra's algorithm.
+    //      Takes in an empty graph and populates it.
+    public static Graph randDirUncGraph(Graph g) {
+        Random r = new Random();
+        int n = g.getSize();
+        // Adds 4*n random edges.
+        for (int i = 0; i < 4*n; i++) {
+            int to = r.nextInt(n);
+            int from = r.nextInt(n);
+            while (to == from) {
+                from = r.nextInt(n);
+            }
+            double weight = randomWeight();
+            g.addEdge(from, to, weight);
         }
         return g;
     }
 
     // Returns a random connected, undirected graph to test Prim's algorithm. Runtime could be improved with a well-implemented set,
     //      but I chose this algorithm because it was easy to implement and deterministic.
-    public static Graph randUndConGraph(int n) {
+    //      Takes in an empty graph and populates it.
+    public static Graph randUndConGraph(Graph g) {
         Random r = new Random();
-        Graph g = new MatrixGraph(n, true);
+        int n = g.getSize();
         MyList<Integer> nodeList = new MyList<>();
         for (int i = 1; i < n; i++) nodeList.append(i);
         int currentMaxIndex = n-1;
@@ -125,6 +150,30 @@ public abstract class Graph {
             g.addEdge(randomFrom, randomTo, randomWeight());
         }
         return g;
+    }
+
+    // Create a matrix-backed copy of the graph g.
+    public static Graph copyToMatrix(Graph g) {
+        Graph copy = new MatrixGraph(g.getSize(), !g.isDirected());
+        for (int i = 0; i < g.getSize(); i++) {
+            MyList<Edge> curOutEdges = g.outEdges(i);
+            for (int j = 0; j < curOutEdges.size(); j++) {
+                copy.addEdge(curOutEdges.get(j));
+            }
+        }
+        return copy;
+    }
+
+    // Create a lists-backed copy of the graph g.
+    public static Graph copyToLists(Graph g) {
+        Graph copy = new ListGraph(g.getSize(), !g.isDirected());
+        for (int i = 0; i < g.getSize(); i++) {
+            MyList<Edge> curOutEdges = g.outEdges(i);
+            for (int j = 0; j < curOutEdges.size(); j++) {
+                copy.addEdge(curOutEdges.get(j));
+            }
+        }
+        return copy;
     }
 
     // Returns a random double between 0 (exclusive) and 10 (inclusive) formatted to one decimal place.

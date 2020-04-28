@@ -34,6 +34,15 @@ public class ListGraph extends Graph{
         }
     }
 
+    // Add an edge object.
+    public void addEdge(Edge toAdd) {
+        removeEdge(toAdd.getFrom(), toAdd.getTo());
+        backingArray[toAdd.getFrom()].append(toAdd);
+        if (undirected) {
+            backingArray[toAdd.getTo()].append(new Edge(toAdd.getTo(), toAdd.getFrom(), toAdd.getWeight()));
+        }
+    }
+
     // Remove the edge from vertex from to vertex to. O(deg(from)) (directed), O(deg(from) + deg(to)) (undirected).
     public void removeEdge(int from, int to) {
         for (int i = 0; i < backingArray[from].size(); i++) {

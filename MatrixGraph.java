@@ -23,6 +23,14 @@ public class MatrixGraph extends Graph {
         backingMatrix[from][to] = weight;
         if (undirected) backingMatrix[to][from] = weight;
     }
+
+    // Add an edge object.
+    public void addEdge(Edge toAdd) {
+        int from = toAdd.getFrom();
+        int to = toAdd.getTo();
+        double weight = toAdd.getWeight();
+        addEdge(from, to, weight);
+    }
     
     // Remove the edge from vertex from to vertex to. O(1).
     public void removeEdge(int from, int to) {

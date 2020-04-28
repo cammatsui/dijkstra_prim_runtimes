@@ -150,28 +150,6 @@ public class MyList<E extends Comparable<E>> implements List<E> {
         return str;
     }
 
-    // Returns the ListNode that contains the minimum value. O(n).
-    private ListNode<E> minNode() {
-        if (this.size == 0) {return null;}
-        ListNode<E> currentNode = this.first;
-        E minValue = currentNode.getContents();
-        ListNode<E> minNode = currentNode;
-        for (int i = 1; i < size; i++) {
-            currentNode = currentNode.getNext();
-            if (currentNode.getContents().compareTo(minValue) < 0) {
-                minValue = currentNode.getContents();
-                minNode = currentNode;
-            }
-        }
-        return minNode;
-    }
-
-    // Removes the node with the minimum value from the list and returns its contents. O(n).
-    public E popMin() {
-        ListNode<E> min = minNode();
-        return pop(min);
-    }
-
     // Returns true if the given element is in the list; false otherwise. O(n).
     public boolean in(E x) {
         if (index(x) == -1) return false;
