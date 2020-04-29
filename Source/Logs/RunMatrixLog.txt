@@ -1,0 +1,2 @@
+Dijkstra's runtime on matrix graph: 119 milliseconds
+Prim's runtime on matrix graph: 118 milliseconds
