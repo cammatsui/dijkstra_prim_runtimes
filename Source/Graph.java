@@ -1,4 +1,7 @@
 import java.util.Random;
+import java.io.File;
+import java.io.IOException;
+import java.io.FileWriter;
 
 // An abstract class. Describes the graph interface and implements
 //      Dijkstra's and Prim's algorithms.
@@ -17,9 +20,9 @@ public abstract class Graph {
     public abstract boolean isDirected();
     // ===========================================================
 
-    public VertexPath[] dijkstra(int startVertex) {
+    public DijkstraTable dijkstra(int startVertex) {
         // "Routing" table.
-        VertexPath[] dijkstraTable = new VertexPath[this.getSize()];
+        DijkstraTable table = new DijkstraTable(this.getSize());
         // List of unvisited vertices. A vertex is visited once all of its neighbors have been examined.
         MinVertexPathHeap unvisited = new MinVertexPathHeap();
         // Initialize our table and unvisited list.
@@ -27,7 +30,7 @@ public abstract class Graph {
             VertexPath thisVertex = new VertexPath(i);
             // Set initial node's path length to 0.
             if (i == startVertex) thisVertex.setPath(0);
-            dijkstraTable[i] = thisVertex;
+            table.set(i, thisVertex);
             unvisited.add(thisVertex);
         }
         // Core of algorithm:
@@ -45,14 +48,14 @@ public abstract class Graph {
             for(int i = 0; i < neighbors.size(); i++) {
                 Edge currentEdge = neighbors.get(i);
                 double edgeWeight = currentEdge.getWeight();
-                VertexPath to = dijkstraTable[(currentEdge.getTo())];
+                VertexPath to = table.get(currentEdge.getTo());
                 if (currentDistance + edgeWeight < to.getPath())
                     unvisited.update(to, currentDistance+edgeWeight, visiting.getVertex());
             }
         }
         // The method returns a table that has an entry for each vertex
         //      that has the length of the shortest path and the previous vertex in that path.
-        return dijkstraTable;
+        return table;
     }
 
     public Graph prim(int startVertex) {
@@ -86,11 +89,8 @@ public abstract class Graph {
                     unvisited.update(to, temp.getWeight(), temp.getFrom());
                 }
             }
-
         }
-    
         Graph mst = new MatrixGraph(getSize(), true);
-
         // Add the shortest edges from the table to the MST
         for (int i = 0; i < this.getSize(); i++) {
             if (i == startVertex) continue;
@@ -99,7 +99,6 @@ public abstract class Graph {
             double weight = primTable[i].getPath();
             mst.addEdge(from, to, weight);
         }
-
         return mst;
     }
 
@@ -141,8 +140,8 @@ public abstract class Graph {
             currentVertex = nextVertex;
             currentMaxIndex -= 1;
         }
-        // Randomly add 3 x n edges.
-        for (int i = 0; i < 3*n; i++) {
+        // Randomly add edges.
+        for (int i = 0; i < 2*n; i++) {
             int randomTo = r.nextInt(n);
             int randomFrom = r.nextInt(n);
 
@@ -193,6 +192,26 @@ public abstract class Graph {
             int s = out.size();
             for (int j = 0; j < s; j++) {System.out.print(out.get(j).getTo() + ", w = " + out.get(j).getWeight() + "| ");}
             System.out.println();
+        }
+    }
+
+    // Print the graph to a file.
+    public void writeToFile(String fileName) {
+        try {
+            File f = new File(fileName);
+            f.createNewFile();
+            FileWriter writer = new FileWriter(fileName);
+            for (int i = 0; i < getSize(); i++) {
+                writer.write(i + ": ");
+                MyList<Edge> out = outEdges(i);
+                int s = out.size();
+                for (int j = 0; j < s; j++) {writer.write(out.get(j).getTo() + ", w = " + out.get(j).getWeight() + "| ");}
+                writer.write("\n");
+            }
+            writer.close();
+        } catch (IOException e) {
+            System.err.println("IO Error writing " + fileName);
+            e.printStackTrace();
         }
     }
 }

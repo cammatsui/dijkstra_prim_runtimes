@@ -1,11 +1,11 @@
-// A min heap to store edges in a graph during Prim's algorithm. 
-public class MinEdgeHeap {
-    private Edge[] backingArray;
+// A min heap to store VertexPaths in a graph during Dijkstra's algorithm. 
+public class MinVertexPathHeap {
+    private VertexPath[] backingArray;
     private int size;
 
-    public MinEdgeHeap() {
+    public MinVertexPathHeap() {
         this.size = 0;
-        this.backingArray = new Edge[10];
+        this.backingArray = new VertexPath[10];
     }
 
     // Get the left, right, and parents of a given index. O(1).
@@ -22,19 +22,25 @@ public class MinEdgeHeap {
         if (this.size == backingArray.length) {newSize = 2 * backingArray.length;}
         else if (this.size < backingArray.length/2 && backingArray.length > 10) {newSize = backingArray.length/2;}
         else {return;}
-        Edge[] newBacking = new Edge[newSize];
+        VertexPath[] newBacking = new VertexPath[newSize];
         for (int i = 0; i < size; i++) newBacking[i] = backingArray[i];
         backingArray = newBacking;
     }
 
     // Add an element to the min heap. O(logn)
-    public void add(Edge x) {
+    public void add(VertexPath x) {
         resize();
         backingArray[size] = x;
-        int p = parent(size);
+        x.setIndex(size);
         int i = size;
         size += 1;
         // Bubble up; swap with our parent if we're smaller than it.
+        bubbleUp(i);
+    }
+
+    // Bubble Up to maintain heap property.
+    public void bubbleUp(int i) {
+        int p = parent(i);
         while (i > 0 && backingArray[i].compareTo(backingArray[p]) < 0) {
             swap(i,p);
             i = p;
@@ -42,15 +48,33 @@ public class MinEdgeHeap {
         }
     }
 
+    // Update and relocate a vertexpath.
+    public void update(VertexPath x, double newPath, int newPrev) {
+        int xIndex = x.getIndex();
+        if (newPath < x.getPath()) {
+            x.setPath(newPath);
+            bubbleUp(xIndex);
+        } else {
+            x.setPath(newPath);
+            trickleDown(xIndex);
+        }
+        x.setPrev(newPrev);
+    }
+
     // Remove the smallest element of the priority queue. O(logn).
-    public Edge remove() {
+    public VertexPath remove() {
         if (this.size == 0) return null;
         resize();
-        Edge x = backingArray[0];
+        VertexPath x = backingArray[0];
         backingArray[0] = backingArray[size-1];
         size -= 1;
         int i = 0;
-        // Trickle down
+        trickleDown(i);
+        return x;
+    }
+
+    // Tricle down to maintain heap property.
+    public void trickleDown(int i) {
         while (true) {
             // If we have no children, we're done.
             if (left(i) >= size && right(i) >= size) {break;}
@@ -74,12 +98,13 @@ public class MinEdgeHeap {
                 }
             }
         }
-        return x;
     }
 
     // Swap the elements at indices i and j in the backing array. O(1).
     private void swap(int i, int j) {
-        Edge temp = backingArray[i];
+        VertexPath temp = backingArray[i];
+        backingArray[i].setIndex(j);
+        backingArray[j].setIndex(i);
         backingArray[i] = backingArray[j];
         backingArray[j] = temp;
     }

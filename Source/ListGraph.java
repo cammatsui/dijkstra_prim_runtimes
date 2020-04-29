@@ -2,7 +2,6 @@ public class ListGraph extends Graph{
     private int n;
     private MyList<Edge>[] backingArray;
     private boolean undirected;
-    // private Dictionary ... (implement later so that each node is a key)
     
     public ListGraph(int n) {
         this.n = n;

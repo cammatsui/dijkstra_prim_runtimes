@@ -2,7 +2,6 @@ public class MatrixGraph extends Graph {
     private int n;
     private double[][] backingMatrix;
     private boolean undirected;
-    // private Dictionary ... (implement later so that each node is a key)
 
     public MatrixGraph(int n) {
         this.n = n;
