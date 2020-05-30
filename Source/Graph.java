@@ -20,9 +20,9 @@ public abstract class Graph {
     public abstract boolean isDirected();
     // ===========================================================
 
-    public DijkstraTable dijkstra(int startVertex) {
+    public VertexTable dijkstra(int startVertex) {
         // "Routing" table.
-        DijkstraTable table = new DijkstraTable(this.getSize());
+        VertexTable dijkstraTable = new VertexTable(this.getSize());
         // List of unvisited vertices. A vertex is visited once all of its neighbors have been examined.
         MinVertexPathHeap unvisited = new MinVertexPathHeap();
         // Initialize our table and unvisited list.
@@ -30,7 +30,7 @@ public abstract class Graph {
             VertexPath thisVertex = new VertexPath(i);
             // Set initial node's path length to 0.
             if (i == startVertex) thisVertex.setPath(0);
-            table.set(i, thisVertex);
+            dijkstraTable.set(i, thisVertex);
             unvisited.add(thisVertex);
         }
         // Core of algorithm:
@@ -48,19 +48,19 @@ public abstract class Graph {
             for(int i = 0; i < neighbors.size(); i++) {
                 Edge currentEdge = neighbors.get(i);
                 double edgeWeight = currentEdge.getWeight();
-                VertexPath to = table.get(currentEdge.getTo());
+                VertexPath to = dijkstraTable.get(currentEdge.getTo());
                 if (currentDistance + edgeWeight < to.getPath())
                     unvisited.update(to, currentDistance+edgeWeight, visiting.getVertex());
             }
         }
         // The method returns a table that has an entry for each vertex
         //      that has the length of the shortest path and the previous vertex in that path.
-        return table;
+        return dijkstraTable;
     }
 
-    public Graph prim(int startVertex) {
+    public VertexTable prim(int startVertex) {
         // Create prim table, list of unvisited vertices and flags
-        VertexPath[] primTable = new VertexPath[this.getSize()];
+        VertexTable primTable = new VertexTable(this.getSize());
         MinVertexPathHeap unvisited = new MinVertexPathHeap();
         boolean[] unvisitedFlag = new boolean[this.getSize()];
 
@@ -69,7 +69,7 @@ public abstract class Graph {
             VertexPath thisVertex = new VertexPath(i);
             unvisitedFlag[i] = true;
             if (i == startVertex) thisVertex.setPath(0);
-            primTable[i] = thisVertex;
+            primTable.set(i, thisVertex);
             unvisited.add(thisVertex);
         }
 
@@ -81,25 +81,16 @@ public abstract class Graph {
             unvisitedFlag[vert] = false;
             // For each vertex pointed to by an outedge, if the vertex is unvisited and this outedge is smaller,
             //      update the corresponding VertexPath's value and previous vertex.
-            MyList<Edge> out = outEdges(vert);
-            for (int i = 0; i < out.size(); i++) {
-                Edge temp = out.get(i);
-                if (unvisitedFlag[temp.getTo()] == true && temp.getWeight() < primTable[temp.getTo()].getPath()) {
-                    VertexPath to = primTable[temp.getTo()];
-                    unvisited.update(to, temp.getWeight(), temp.getFrom());
+            MyList<Edge> neighbors = outEdges(vert);
+            for (int i = 0; i < neighbors.size(); i++) {
+                Edge currentEdge = neighbors.get(i);
+                if (unvisitedFlag[currentEdge.getTo()] == true && currentEdge.getWeight() < primTable.get(currentEdge.getTo()).getPath()) {
+                    VertexPath to = primTable.get(currentEdge.getTo());
+                    unvisited.update(to, currentEdge.getWeight(), currentEdge.getFrom());
                 }
             }
         }
-        Graph mst = new MatrixGraph(getSize(), true);
-        // Add the shortest edges from the table to the MST
-        for (int i = 0; i < this.getSize(); i++) {
-            if (i == startVertex) continue;
-            int from = primTable[i].getPrev();
-            int to = primTable[i].getVertex();
-            double weight = primTable[i].getPath();
-            mst.addEdge(from, to, weight);
-        }
-        return mst;
+        return primTable;
     }
 
     // Returns a random directed, not necessarily connected, graph to test Dijkstra's algorithm.

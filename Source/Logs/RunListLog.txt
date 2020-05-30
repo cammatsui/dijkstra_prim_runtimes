@@ -1,0 +1,2 @@
+Dijkstra's runtime on list graph: 15 milliseconds
+Prim's runtime on list graph: 16 milliseconds

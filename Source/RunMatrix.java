@@ -16,9 +16,9 @@ public class RunMatrix {
         // Dijkstra's
         System.out.println("Running Dijkstra's on MatrixGraph...");
         long start = System.currentTimeMillis();
-        DijkstraTable table = dijkstraTest.dijkstra(0);
+        VertexTable dijkstraTable = dijkstraTest.dijkstra(0);
         long stop = System.currentTimeMillis();
-        table.writeToFile("Logs/matrixDijkstraTable.txt");
+        dijkstraTable.writeToFile("Logs/matrixDijkstraTable.txt");
         long dijkstraRuntime = stop-start;
         System.out.println("Took " + dijkstraRuntime + " milliseconds.");
 
@@ -30,9 +30,9 @@ public class RunMatrix {
         // Prim's
         System.out.println("Running Prim's on MatrixGraph...");
         start = System.currentTimeMillis();
-        Graph mst = primTest.prim(0);
+        VertexTable primTable = primTest.prim(0);
         stop = System.currentTimeMillis();
-        mst.writeToFile("Logs/matrixPrimTree.txt");
+        primTable.writeToFile("Logs/matrixPrimTable.txt");
         long primRunTime = stop-start;
         System.out.println("Took " + primRunTime + " milliseconds.");
 

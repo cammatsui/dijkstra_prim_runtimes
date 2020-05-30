@@ -16,9 +16,9 @@ public class RunLists {
         // Dijkstra's
         System.out.println("Running Dijkstra's on ListGraph...");
         long start = System.currentTimeMillis();
-        DijkstraTable table = dijkstraTest.dijkstra(0);
+        VertexTable dijkstraTable = dijkstraTest.dijkstra(0);
         long stop = System.currentTimeMillis();
-        table.writeToFile("Logs/listDijkstraTable.txt");
+        dijkstraTable.writeToFile("Logs/listDijkstraTable.txt");
         long dijkstraRuntime = stop-start;
         System.out.println("Took " + dijkstraRuntime + " milliseconds.");
 
@@ -30,9 +30,9 @@ public class RunLists {
         // Prim's
         System.out.println("Running Prim's on ListGraph...");
         start = System.currentTimeMillis();
-        Graph mst = primTest.prim(0);
+        VertexTable primTable = primTest.prim(0);
         stop = System.currentTimeMillis();
-        mst.writeToFile("Logs/listPrimTree.txt");
+        primTable.writeToFile("Logs/listPrimTable.txt");
         long primRunTime = stop-start;
         System.out.println("Took " + primRunTime + " milliseconds.");
 
