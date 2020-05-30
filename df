@@ -1,0 +1,35 @@
+* [33mcommit bfa7d5254d1e89765902f4b6912ebf7cbfebfdf5[m[33m ([m[1;36mHEAD -> [m[1;32mmaster[m[33m)[m
+[31m|[m Author: cammatsui <cmatsui11@gmail.com>
+[31m|[m Date:   Wed Apr 29 18:18:23 2020 -0300
+[31m|[m 
+[31m|[m     added writeup and two execution files
+[31m|[m 
+* [33mcommit abf8ee77d5ba0973846c0b8fec71dbf0940cd10a[m
+[31m|[m Author: cammatsui <cmatsui11@gmail.com>
+[31m|[m Date:   Tue Apr 28 18:11:06 2020 -0300
+[31m|[m 
+[31m|[m     fixed runtimes
+[31m|[m 
+* [33mcommit a2f04fc5c6d1380cce5748ac790bf8bccaebde40[m
+[31m|[m Author: cammatsui <cmatsui11@gmail.com>
+[31m|[m Date:   Thu Apr 23 13:20:00 2020 -0300
+[31m|[m 
+[31m|[m     First Run
+[31m|[m 
+* [33mcommit f20db1e0407c4e95e3e6ecd157985c0d7ef0aa71[m
+[31m|[m Author: cammatsui <cmatsui11@gmail.com>
+[31m|[m Date:   Thu Apr 23 13:13:49 2020 -0300
+[31m|[m 
+[31m|[m     Prim's Algorithm
+[31m|[m 
+* [33mcommit 761162b6105a3415bc15380d79cf26e4f17a653a[m
+[31m|[m Author: cammatsui <cmatsui11@gmail.com>
+[31m|[m Date:   Tue Apr 21 18:37:41 2020 -0300
+[31m|[m 
+[31m|[m     Finished Dijkstra's
+[31m|[m 
+* [33mcommit 38cb88a8bc1389c71b5aab294d0a0b7562d4da39[m
+  Author: cammatsui <cmatsui11@gmail.com>
+  Date:   Tue Apr 21 04:21:00 2020 -0300
+  
+      First Commit

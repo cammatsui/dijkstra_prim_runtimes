@@ -11,36 +11,36 @@ public class RunLists {
         // Create random graph to test Dijkstra's algorithm
         Graph dijkstraTest = new ListGraph(testSize);
         Graph.randDirUncGraph(dijkstraTest);
-        dijkstraTest.writeToFile("Logs/listDijkstraGraph.txt");
+        dijkstraTest.writeToFile("logs/listDijkstraGraph.txt");
 
         // Dijkstra's
         System.out.println("Running Dijkstra's on ListGraph...");
         long start = System.currentTimeMillis();
         VertexTable dijkstraTable = dijkstraTest.dijkstra(0);
         long stop = System.currentTimeMillis();
-        dijkstraTable.writeToFile("Logs/listDijkstraTable.txt");
+        dijkstraTable.writeToFile("logs/listDijkstraTable.txt");
         long dijkstraRuntime = stop-start;
         System.out.println("Took " + dijkstraRuntime + " milliseconds.");
 
         // Create random graph to test Prim's algorithm
         Graph primTest = new ListGraph(testSize, true);
         Graph.randUndConGraph(primTest);
-        primTest.writeToFile("Logs/listPrimGraph.txt");
+        primTest.writeToFile("logs/listPrimGraph.txt");
 
         // Prim's
         System.out.println("Running Prim's on ListGraph...");
         start = System.currentTimeMillis();
         VertexTable primTable = primTest.prim(0);
         stop = System.currentTimeMillis();
-        primTable.writeToFile("Logs/listPrimTable.txt");
+        primTable.writeToFile("logs/listPrimTable.txt");
         long primRunTime = stop-start;
         System.out.println("Took " + primRunTime + " milliseconds.");
 
         // Record runtimes.
         try{ 
-            File f = new File("Logs/RunListLog.txt");
+            File f = new File("logs/RunListLog.txt");
             f.createNewFile();
-            FileWriter writer = new FileWriter("Logs/RunListLog.txt");
+            FileWriter writer = new FileWriter("logs/RunListLog.txt");
             writer.write("Dijkstra's runtime on list graph: " + dijkstraRuntime + " milliseconds\n");
             writer.write("Prim's runtime on list graph: " + primRunTime + " milliseconds\n");
             writer.close();
